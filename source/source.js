@@ -70,7 +70,7 @@ const postName = (question) => {
 
 const userStillLogged = () => {
 
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/participants",{name:userName});
+    axios.post("https://mock-api.driven.com.br/api/v4/uol/status",{name:userName});
     return null;
 }
 
