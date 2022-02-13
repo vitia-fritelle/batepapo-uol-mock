@@ -17,17 +17,27 @@
         <ion-icon class="pointer" name="people"></ion-icon>
     </header>
     <main>
-        <ul id="messages">
-
-        </ul>
+        <ul id="messages"></ul>
     </main>
     <div id="message-bar">
         <input type="text" name="textbox" id="textbox" placeholder="Escreva aqui...">
         <ion-icon onclick="sendMessage()" class="pointer" name="paper-plane-outline" data-identifier="send-message"></ion-icon>
     </div>
+    <div id="initial-screen">
+        <img class="pointer" src="./assets/images/logo.svg" alt="Bate-Papo UOL">
+        <div class="input-username">
+            <input data-identifier="enter-name" type="text" name="login" id="login" placeholder="Digite seu nome">
+        <button data-identifier="start" class="pointer" type="submit" onclick="sendUserName();">Entrar</button>
+        </div>
+        <div class="loading hidden">
+            <ion-spinner name="bubbles"></ion-spinner>
+            Entrando...
+        </div>
+    </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
     <script src="./source/source.js"></script>
 </body>
 </html>

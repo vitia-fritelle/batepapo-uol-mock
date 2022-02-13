@@ -1,5 +1,5 @@
 //Variáveis Globais
-let ul,userName,messageInterval,userInterval,input;
+let ul,userName,messageInterval,userInterval;
 
 // Funções
 const filterPrivateMessages = (message) => {
@@ -8,7 +8,9 @@ const filterPrivateMessages = (message) => {
     const isStatus = message.type === "status";
     const isPrivateMessage = message.type === "private_message";
     const isToUserName = message.to === userName;
-    return (isPrivateMessage && isToUserName) || isNormalMessage || isStatus;
+    return (isPrivateMessage && isToUserName) 
+           || isNormalMessage 
+           || isStatus;
 }
 
 const addMessage = (message) => {
@@ -22,11 +24,7 @@ const addMessage = (message) => {
     return null;
 }
 
-const resetMessages = () => {
-
-    ul.innerHTML = "";
-    return null;
-};
+const resetMessages = () => ul.innerHTML = "";
 
 const automaticScroll = () => {
 
@@ -66,23 +64,23 @@ const postName = (question) => {
 
 const handlingError = (error) => {
 
-    const statusCode = error.response.status
-    statusCode === 400 && postName("O nome de usuário já foi pego. Insira um outro nome.")
-    statusCode !== 200 && postName("Insira um novo nome.");
+    const statusCode = error.response.status;
+    if (statusCode === 400) {
+        // postName("O nome de usuário já foi pego. Insira um outro nome.")
+        alert("O nome de usuário já foi pego. Insira um outro nome.");
+    } else if (statusCode !== 200){
+        // postName("Insira um novo nome.");
+        alert("Insira um novo nome.");
+    }
     return null;
 }
 
-const userStillLogged = () => {
+const userStillLogged = () => axios.post(
+    "https://mock-api.driven.com.br/api/v4/uol/status",
+    {name:userName}
+);
 
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/status",{name:userName});
-    return null;
-}
-
-const resetInputValue = () => {
-
-    input.value = "";
-    return null;
-}
+const resetInputValue = (input) => input.value = "";
 
 const updateMessages = () => {
 
@@ -102,30 +100,83 @@ const reloadPage = () => {
 
 const sendMessage = () => {
 
-    const message = input.value;
-    axios.post("https://mock-api.driven.com.br/api/v4/uol/messages",{
-        from: `${userName}`,
-        to: "Todos",
-        text: `${message}`,
-        type: "message" // ou "private_message" para o bônus
-    }).then(updateMessages).catch(reloadPage);
-    resetInputValue();
+    const messageInput = document.querySelector("input[name='textbox']");
+    const message = messageInput.value;
+    axios.post(
+        "https://mock-api.driven.com.br/api/v4/uol/messages",
+        {
+            from: `${userName}`,
+            to: "Todos",
+            text: `${message}`,
+            type: "message" // ou "private_message" para o bônus
+        }
+        ).then(updateMessages)
+         .catch(reloadPage);
+    resetInputValue(messageInput);
     return null;
 }
 
-const sendMessageWithEnter = () => {
-    input.addEventListener('keyup',(e) => {
-        const key = e.keyCode;
-        key === 13 && sendMessage();
-    });
+const sendUserName = () => {
+
+    const loginInput = document.querySelector("input[name='login']");
+    userName = loginInput.value;
+    showLoading();
+    axios.post(
+        "https://mock-api.driven.com.br/api/v4/uol/participants",
+        {name:userName, validateStatus:(status) => status !== 200}
+        ).then(initChat)
+         .catch(handlingError)
+         .then(showLoading);
+         
+    return null;
+}
+
+const sendWithEnter = (input, action) => input.addEventListener(
+    'keyup',
+    (e) => e.keyCode === 13 && action());
+
+const initChat = () => {
+
+    const loginPage = document.querySelector("#initial-screen");
+    loginPage.classList.add("hidden");
+    getMessages();
+    messageInterval = setInterval(getMessages,3000);
+    userInterval = setInterval(userStillLogged,5000);
+    return null;       
+}
+
+const showLoading = () => {
+
+    const loading = document.querySelector(".loading");
+    loading.classList.toggle("hidden");
+    const inputUsername = document.querySelector(".input-username");
+    inputUsername.classList.toggle("hidden");
+    return null;
 }
 
 //Inicialização da página
 ul = document.querySelector("#messages");
-input = document.querySelector("input[name='textbox']");
-sendMessageWithEnter();
-postName("Qual o seu lindo nome?");
-getMessages();
-messageInterval = setInterval(getMessages,3000);
-userInterval = setInterval(userStillLogged,5000);
+sendWithEnter(document.querySelector("input[name='login']"),sendUserName);
+sendWithEnter(document.querySelector("input[name='textbox']"),sendMessage);
+
+//Normalmente, eu criaria uma classe para representar esses inputs 
+//personalizados e colocaria o método sendWithEnter numa abstrata
+//e sobrescreveria. Em JS, o pensamento é como? Algo como: 
+//function Input(element){
+//   this.element = element;
+//   this.value = element.value;
+//   this.reset = () => {
+//       this.element.value = "";
+//       return null;      
+//   }
+//   this.sendWithEnter = (action) => {
+//    this.element.addEventListener('keyup',(e) => {
+//        const key = e.keyCode;
+//        key === 13 && action();
+//        return null;
+//    });
+//    return null;    
+//   } 
+//}
+
 
