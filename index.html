@@ -14,13 +14,16 @@
 <body>
     <header>
         <img class="pointer" src="./assets/images/logo.svg" alt="Bate-Papo UOL">
-        <ion-icon class="pointer" name="people"></ion-icon>
+        <ion-icon class="pointer" onclick="toggleActiveParticipants()" name="people"></ion-icon>
     </header>
     <main>
         <ul id="messages"></ul>
     </main>
     <div id="message-bar">
-        <input type="text" name="textbox" id="textbox" placeholder="Escreva aqui...">
+        <div>
+            <input type="text" name="textbox" id="textbox" placeholder="Escreva aqui...">
+            <p class="recipient-visibility-message"></p>
+        </div>
         <ion-icon onclick="sendMessage()" class="pointer" name="paper-plane-outline" data-identifier="send-message"></ion-icon>
     </div>
     <div id="initial-screen">
@@ -34,6 +37,20 @@
             Entrando...
         </div>
     </div>
+    <aside class="hidden">
+        <div id="active-participants">
+            <div class="width-100 pointer">
+                <ion-icon onclick="toggleActiveParticipants()" name="close-outline"></ion-icon>
+            </div>
+            <h3>Escolha um contato para enviar mensagem:</h3>
+            <ul id="contacts"></ul>
+            <h3>Escolha a visibilidade</h3>
+            <ul id="visibility">
+                <li data-identifier="visibility" class="pointer" onclick="getVisibility(this)"><ion-icon name="lock-open"></ion-icon>Público<ion-icon class='hidden' name="checkmark-outline"></ion-icon></li>
+                <li data-identifier="visibility" class="pointer" onclick="getVisibility(this)"><ion-icon name="lock-closed"></ion-icon>Reservadamente<ion-icon class='hidden' name="checkmark-outline"></ion-icon></li>
+            </ul>
+        </div>
+    </aside>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>

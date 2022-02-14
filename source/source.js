@@ -1,5 +1,6 @@
 //Variáveis Globais
-let ul,userName,messageInterval,userInterval;
+let messages,userName,messageInterval,userInterval,activeUsers,recipient,
+    visibility,activeUser,textUnderPlaceholder;
 
 // Funções
 const filterPrivateMessages = (message) => {
@@ -20,15 +21,15 @@ const addMessage = (message) => {
         "message":`<li data-identifier="message" class="normal_message"><span class="time">(${message.time})</span> <b>${message.from}</b> para <b>${message.to}</b>: ${message.text}</li>`,
         "private_message":`<li data-identifier="message" class="private_message"><span class="time">(${message.time})</span> <b>${message.from}</b> reservadamente para <b>${message.to}</b>: ${message.text}</li>`
     };
-    ul.innerHTML += factory[message.type];
+    messages.innerHTML += factory[message.type];
     return null;
 }
 
-const resetMessages = () => ul.innerHTML = "";
+const resetMessages = () => messages.innerHTML = "";
 
 const automaticScroll = () => {
 
-    const lastMessage = ul.querySelector("li:last-of-type");
+    const lastMessage = messages.querySelector("li:last-of-type");
     lastMessage.scrollIntoView();
     return null;
 }
@@ -94,6 +95,7 @@ const reloadPage = () => {
 
     clear(messageInterval);
     clear(userInterval);
+    clear(activeUsersInterval);
     window.location.reload(true);
     return null;
 }
@@ -106,9 +108,9 @@ const sendMessage = () => {
         "https://mock-api.driven.com.br/api/v4/uol/messages",
         {
             from: `${userName}`,
-            to: "Todos",
+            to: `${recipient}`,
             text: `${message}`,
-            type: "message" // ou "private_message" para o bônus
+            type: `${visibility}`
         }
         ).then(updateMessages)
          .catch(reloadPage);
@@ -140,8 +142,11 @@ const initChat = () => {
     const loginPage = document.querySelector("#initial-screen");
     loginPage.classList.add("hidden");
     getMessages();
+    getActiveParticipants();
+    changeTextUnderPlaceholder();
     messageInterval = setInterval(getMessages,3000);
     userInterval = setInterval(userStillLogged,5000);
+    activeUsersInterval = setInterval(getActiveParticipants,10000);
     return null;       
 }
 
@@ -154,8 +159,98 @@ const showLoading = () => {
     return null;
 }
 
+const toggleActiveParticipants = () => {
+
+    const aside = document.querySelector("aside");
+    aside.classList.toggle("hidden");
+    return null;
+}
+
+const getActiveParticipants = () => {
+
+    axios.get("https://mock-api.driven.com.br/api/v4/uol/participants")
+         .then(writeNewParticipants);
+    return null;
+}
+
+const addParticipant = ({name}) => {
+    
+    activeUsers.innerHTML += `<li data-identifier='participant' class='pointer' onclick='getRecipient(this)'><ion-icon name="person-circle"></ion-icon>${name}<ion-icon class='hidden' name='checkmark-outline'></ion-icon></li>`;
+    return null;
+}
+
+const writeNewParticipants = ({data}) => {
+
+    resetParticipants();
+    data.forEach(addParticipant);
+    return null;
+}
+
+const resetParticipants = () => activeUsers.innerHTML = "<li data-identifier='participant' class='pointer' onclick='getRecipient(this)'><ion-icon name='people'></ion-icon>Todos<ion-icon class='hidden' name='checkmark-outline'></ion-icon></li>";
+
+const getRecipient = (element) => {
+
+    recipient = element.innerText;
+    activeUser = element;
+    unselectActiveUsers();
+    selectOption(element);
+    changeTextUnderPlaceholder();
+    return null;
+}
+const getVisibility = (element) => {
+    
+    const factory = {
+        "Público":"message",
+        "Reservadamente":"private_message"
+    };
+    visibility = factory[element.innerText];
+    unselectVisibilities();
+    selectOption(element);
+    changeTextUnderPlaceholder();
+    return null;
+}
+const changeTextUnderPlaceholder = () => {
+
+    textUnderPlaceholder.innerText = `Enviando para ${recipient} ${visibility === "private_message"?"(reservadamente)":""}`;
+    return null;
+}
+
+const selectOption = (element) => {
+    
+    const check = element.querySelector("ion-icon[name='checkmark-outline']");
+    check.classList.remove("hidden");
+    return null;
+}
+
+const unselectActiveUsers = () => {
+    
+    const checkList = activeUsers.querySelectorAll("ion-icon[name='checkmark-outline']");
+    checkList.forEach((element) => {
+        if(!element.classList.contains("hidden")){
+            element.classList.add("hidden");
+        }
+    });
+}
+
+const unselectVisibilities = () => {
+    
+    const visibilities = document.querySelector("#visibility");
+    const checkList = visibilities.querySelectorAll("ion-icon[name='checkmark-outline']");
+    checkList.forEach((element) => {
+        if(!element.classList.contains("hidden")){
+            element.classList.add("hidden");
+        }
+    });
+}
+
 //Inicialização da página
-ul = document.querySelector("#messages");
+messages = document.querySelector("#messages");
+activeUsers = document.querySelector("#contacts");
+resetParticipants();
+recipient = "Todos";
+visibility = "message";
+activeUser = document.querySelector("li[data-identifier='participant']");
+textUnderPlaceholder = document.querySelector(".recipient-visibility-message");
 sendWithEnter(document.querySelector("input[name='login']"),sendUserName);
 sendWithEnter(document.querySelector("input[name='textbox']"),sendMessage);
 
