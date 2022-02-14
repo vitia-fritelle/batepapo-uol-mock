@@ -210,14 +210,6 @@ aside #active-participants {
     overflow-x: hidden;
 }
 
-aside #active-participants .width-100 {
-    width: 100%;
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-end;
-    align-items: center;
-}
-
 aside #active-participants h3 {
     width: 100%;
 
@@ -258,4 +250,9 @@ aside #active-participants ion-icon{
 #message-bar div {
     width: 100%;
     overflow: hidden;
+}
+
+.fundo-falso {
+    height: 100%;
+    width: 100%;
 }

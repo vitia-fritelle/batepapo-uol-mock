@@ -133,9 +133,11 @@ const sendUserName = () => {
     return null;
 }
 
-const sendWithEnter = (input, action) => input.addEventListener(
-    'keyup',
-    (e) => e.keyCode === 13 && action());
+const sendWithEnter = (input, action) => {
+    
+    input.addEventListener('keyup',(e) => e.keyCode === 13 && action());
+    return null;
+}
 
 const initChat = () => {
 
@@ -230,6 +232,7 @@ const unselectActiveUsers = () => {
             element.classList.add("hidden");
         }
     });
+    return null;
 }
 
 const unselectVisibilities = () => {
@@ -241,6 +244,7 @@ const unselectVisibilities = () => {
             element.classList.add("hidden");
         }
     });
+    return null;
 }
 
 //Inicialização da página
