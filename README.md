@@ -3,11 +3,7 @@
 
 ## Descrição
 
-Seu terceiro projeto com JavaScript será a implementação de um bate-papo totalmente funcional, inspirado no saudoso Bate-Papo UOL. Mas evite usar o site real da UOL como referência, pois apesar de inspirado nele, nossa interface é totalmente diferente :)
-
-### WakaTime
-
-- Nomeie a pasta do seu projeto com: `projeto5-batepapo-uol`
+Implementação de um bate-papo totalmente funcional, inspirado no saudoso Bate-Papo UOL. Evite usar o site real da UOL como referência, pois apesar de inspirado nele, nossa interface é totalmente diferente :)
 
 ### API
 
