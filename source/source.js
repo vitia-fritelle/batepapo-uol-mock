@@ -9,7 +9,8 @@ const filterPrivateMessages = (message) => {
     const isStatus = message.type === "status";
     const isPrivateMessage = message.type === "private_message";
     const isToUserName = message.to === userName;
-    return (isPrivateMessage && isToUserName) 
+    const isFromUserName = message.from === userName;
+    return (isPrivateMessage && (isToUserName || isFromUserName)) 
            || isNormalMessage 
            || isStatus;
 }
@@ -17,9 +18,9 @@ const filterPrivateMessages = (message) => {
 const addMessage = (message) => {
     
     const factory = {
-        "status":`<li data-identifier="message" class="status"><span class="time">(${message.time})</span> <b>${message.from}</b> ${message.text}</li>`,
-        "message":`<li data-identifier="message" class="normal_message"><span class="time">(${message.time})</span> <b>${message.from}</b> para <b>${message.to}</b>: ${message.text}</li>`,
-        "private_message":`<li data-identifier="message" class="private_message"><span class="time">(${message.time})</span> <b>${message.from}</b> reservadamente para <b>${message.to}</b>: ${message.text}</li>`
+        "status":`<li data-identifier="message" class="status"><span class="time">(${message.time}) </span> <b>${message.from} </b> ${message.text}</li>`,
+        "message":`<li data-identifier="message" class="normal_message"><span class="time">(${message.time}) </span> <b>${message.from} </b> para <b>${message.to}</b>: ${message.text}</li>`,
+        "private_message":`<li data-identifier="message" class="private_message"><span class="time">(${message.time}) </span> <b>${message.from} </b> reservadamente para <b>${message.to}</b>: ${message.text}</li>`
     };
     messages.innerHTML += factory[message.type];
     return null;
@@ -30,7 +31,7 @@ const resetMessages = () => messages.innerHTML = "";
 const automaticScroll = () => {
 
     const lastMessage = messages.querySelector("li:last-of-type");
-    lastMessage.scrollIntoView();
+    lastMessage.scrollIntoView({behavior: 'smooth'});
     return null;
 }
 
